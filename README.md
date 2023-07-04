@@ -1,3 +1,3 @@
-# yukatel-case
+# googlemap-project
 
 Initial Commit
