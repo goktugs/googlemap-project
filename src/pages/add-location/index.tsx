@@ -1,12 +1,8 @@
 import { Box, Center, Container, Heading } from "@chakra-ui/react";
-import {
-  GoogleMap,
-  GoogleMapProps,
-  Marker,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import React, { useState } from "react";
 import { useLocationsStore } from "@/store/useLocationsStore";
+import Link from "next/link";
 
 export default function AddLocations() {
   const containerStyle = {
@@ -85,6 +81,8 @@ export default function AddLocations() {
           </Box>
         </Center>
       </Container>
+
+      <Link href="/list-locations">deneme</Link>
     </Box>
   );
 }
