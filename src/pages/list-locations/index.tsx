@@ -52,9 +52,14 @@ export default function ListLocations() {
 
   return (
     <VStack>
-      <Box cursor="pointer">
-        <Link href={"/make-route"}>Rota Düzenleme Sayfasına Git</Link>
+      <Box padding={8} cursor="pointer">
+        {locations.length > 0 ? (
+          <Link href={"/make-route"}>Rota Düzenleme Sayfasına Git</Link>
+        ) : (
+          <Link href={"/add-location"}>Konum Ekleme Sayfasına Geri Dön</Link>
+        )}
       </Box>
+
       <Center>
         <TableContainer>
           <Table variant="striped">
@@ -112,6 +117,10 @@ export default function ListLocations() {
           </Table>
         </TableContainer>
       </Center>
+
+      <Box mt={4}>
+        <Link href={"/add-location"}>Konum Ekleme Sayfasına Geri Dön</Link>
+      </Box>
     </VStack>
   );
 }
