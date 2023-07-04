@@ -82,7 +82,11 @@ export default function AddLocations() {
         </Center>
       </Container>
 
-      <Link href="/list-locations">deneme</Link>
+      {locations.length > 0 && (
+        <Center mt={8}>
+          <Link href="/list-locations">Lokasyon Listelemeye Git</Link>
+        </Center>
+      )}
     </Box>
   );
 }
