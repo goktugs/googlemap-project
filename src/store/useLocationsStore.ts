@@ -1,18 +1,12 @@
 import { create } from "zustand";
 
-interface LocationState {
-  id: number;
-  lat: number;
-  lng: number;
-  markerColor: string;
-  detail: string;
-}
+import { LocationStateType } from "../types/types";
 
 type LocationStore = {
-  locations: LocationState[];
-  addLocation: (location: LocationState) => void;
+  locations: LocationStateType[];
+  addLocation: (location: LocationStateType) => void;
   removeLocation: (id: number) => void;
-  updateLocation: (id: number, updatedData: Partial<LocationState>) => void;
+  updateLocation: (id: number, updatedData: Partial<LocationStateType>) => void;
   //   clearLocations: () => void;
 };
 export const useLocationsStore = create<LocationStore>((set) => ({
