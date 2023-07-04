@@ -1,48 +1,90 @@
-import { Center } from "@chakra-ui/react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import React from "react";
+import { Box, Center, Container, Heading } from "@chakra-ui/react";
+import {
+  GoogleMap,
+  GoogleMapProps,
+  Marker,
+  useJsApiLoader,
+} from "@react-google-maps/api";
+import React, { useState } from "react";
+import { useLocationsStore } from "@/store/useLocationsStore";
 
 export default function AddLocations() {
   const containerStyle = {
-    width: "400px",
+    width: "100%",
     height: "400px",
   };
 
-  const center = {
-    lat: 41.0801416,
-    lng: 29.0177608,
-  };
+  const [center, setCenter] = useState({
+    lat: 41.015137,
+    lng: 28.97953,
+  });
+
+  const [color, setColor] = useState("#FF0000");
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_ENV_VARIABLE ?? "",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_ENV_VARIABLE!,
   });
 
-  const [map, setMap] = React.useState(null);
+  const { locations, addLocation } = useLocationsStore();
 
-  const onLoad = React.useCallback(function callback(map) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center);
-    map.fitBounds(bounds);
+  const onMapClick = React.useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) {
+        const newLocation = {
+          id: locations.length + 1,
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng(),
+          markerColor: color,
+          detail: "deneme",
+        };
+        addLocation(newLocation);
+      }
+    },
+    [addLocation, locations.length, color]
+  );
 
-    setMap(map);
-  }, []);
-
-  const onUnmount = React.useCallback(function callback(map) {
-    setMap(null);
-  }, []);
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(e.target.value);
+  };
 
   return (
-    <Center>
-      {isLoaded ? (
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={14}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-        />
-      ) : null}
-    </Center>
+    <Box>
+      <Center mt={8}>
+        <Heading as="h1">Konum Ekleme Sayfası</Heading>
+      </Center>
+
+      <Container maxW="container.lg" mt={4}>
+        <Center>
+          {isLoaded && (
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={center}
+              zoom={14}
+              onClick={onMapClick}
+            >
+              {locations.map((location) => (
+                <Marker
+                  key={location.id}
+                  position={{ lat: location.lat, lng: location.lng }}
+                  icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${location.markerColor.replace(
+                    "#",
+                    ""
+                  )}`}
+                />
+              ))}
+            </GoogleMap>
+          )}
+        </Center>
+        <Center flexDir="column" mt={4}>
+          <Heading as="h2" fontSize="md">
+            Markerın Rengini Değiştir
+          </Heading>
+          <Box mt={4}>
+            <input type="color" value={color} onChange={handleColorChange} />
+          </Box>
+        </Center>
+      </Container>
+    </Box>
   );
 }
