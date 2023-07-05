@@ -3,7 +3,8 @@ import React from "react";
 import { useLocationsStore } from "@/store/useLocationsStore";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { useRouter } from "next/router";
-import { Center, Container, Heading } from "@chakra-ui/react";
+import { Alert, AlertIcon, Center, Container, Heading } from "@chakra-ui/react";
+import Link from "next/link";
 
 export default function EditLocations() {
   const { locations, updateLocation } = useLocationsStore();
@@ -67,6 +68,16 @@ export default function EditLocations() {
             </GoogleMap>
           )}
         </Center>
+        <Alert mt={8} status="info">
+          <AlertIcon />
+          Markerı sürükleyerek konumu değiştirebilirsiniz.
+        </Alert>
+
+        {locations.length > 0 && (
+          <Center mt={8}>
+            <Link href="/list-locations">Lokasyon Listelemeye Git</Link>
+          </Center>
+        )}
       </Container>
     </>
   );
