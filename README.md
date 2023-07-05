@@ -20,5 +20,9 @@ git clone https://github.com/goktugs/googlemap-project
 ```
 
 ```shell
+npm isntall
+```
+
+```shell
 npm dev
 ```
