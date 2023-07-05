@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocationsStore } from "@/store/useLocationsStore";
 import {
   Box,
+  Button,
   Center,
   Table,
   TableContainer,
@@ -52,13 +53,11 @@ export default function ListLocations() {
 
   return (
     <VStack>
-      <Box padding={8} cursor="pointer">
-        {locations.length > 0 ? (
+      {locations.length && (
+        <Button padding={8} my={4} bg="salmon">
           <Link href={"/make-route"}>Rota Düzenleme Sayfasına Git</Link>
-        ) : (
-          <Link href={"/add-location"}>Konum Ekleme Sayfasına Geri Dön</Link>
-        )}
-      </Box>
+        </Button>
+      )}
 
       <Center>
         <TableContainer>
@@ -118,9 +117,9 @@ export default function ListLocations() {
         </TableContainer>
       </Center>
 
-      <Box mt={4}>
+      <Button padding={8} bg="salmon" mt={4}>
         <Link href={"/add-location"}>Konum Ekleme Sayfasına Geri Dön</Link>
-      </Box>
+      </Button>
     </VStack>
   );
 }

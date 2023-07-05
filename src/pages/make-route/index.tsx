@@ -139,7 +139,7 @@ export default function MakeRoute() {
           <Alert mt={8} status="error">
             <AlertIcon />
             <Link href={"/add-location"}>
-              Yeterince Konum Yok Konum Ekleme Sayfasına Geri Dön?
+              Konum Yok. Konum Ekleme Sayfasına Geri Dön?
             </Link>{" "}
           </Alert>
         ) : (
