@@ -65,13 +65,19 @@ export default function Footer() {
       >
         <Image width={64} height={64} src={logo} alt="logo" />
         <Stack direction={"row"} spacing={6}>
-          <SocialButton label={"Linkedin"} href={"#"}>
+          <SocialButton
+            label={"Linkedin"}
+            href={"https://www.linkedin.com/in/goktugsevgil/"}
+          >
             <FaLinkedin />
           </SocialButton>
-          <SocialButton label={"Twitter"} href={"#"}>
+          <SocialButton
+            label={"Twitter"}
+            href={"https://twitter.com/kakakakaqqww"}
+          >
             <FaTwitter />
           </SocialButton>
-          <SocialButton label={"Github"} href={"#"}>
+          <SocialButton label={"Github"} href={"https://github.com/goktugs"}>
             <FaGithub />
           </SocialButton>
         </Stack>
