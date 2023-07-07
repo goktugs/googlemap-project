@@ -1,48 +1,38 @@
-import { Box, Center, Container, Heading } from "@chakra-ui/react";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import React, { useState } from "react";
+import GoogleMapComp from "@/components/map";
+import MarkerColorChange from "@/components/markerColorChange";
 import { useLocationsStore } from "@/store/useLocationsStore";
+import { getDetail } from "@/utils/getDetail";
+import { Box, Button, Center, Container, Heading } from "@chakra-ui/react";
 import Link from "next/link";
+import React, { useState } from "react";
 
 export default function AddLocations() {
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-  };
+  const [color, setColorState] = useState<string>("#FF0000");
+  const [details, setDetails] = useState<string | null>(null);
 
-  const [center, setCenter] = useState({
-    lat: 41.015137,
-    lng: 28.97953,
-  });
-
-  const [color, setColor] = useState("#FF0000");
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_ENV_VARIABLE!,
-  });
+  const colorRef = React.useRef(color);
 
   const { locations, addLocation } = useLocationsStore();
 
   const onMapClick = React.useCallback(
-    (e: google.maps.MapMouseEvent) => {
+    async (e: google.maps.MapMouseEvent) => {
       if (e.latLng) {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        const detail = await getDetail(lat, lng);
+        setDetails(detail || "Bilgi Yok");
         const newLocation = {
           id: locations.length + 1,
-          lat: e.latLng.lat(),
-          lng: e.latLng.lng(),
-          markerColor: color,
-          detail: "deneme",
+          lat: lat,
+          lng: lng,
+          markerColor: colorRef.current,
+          detail: details || "Bilgi Yok",
         };
         addLocation(newLocation);
       }
     },
-    [addLocation, locations.length, color]
+    [addLocation, details, locations.length]
   );
-
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setColor(e.target.value);
-  };
 
   return (
     <Box>
@@ -51,40 +41,23 @@ export default function AddLocations() {
       </Center>
 
       <Container maxW="container.lg" mt={4}>
-        <Center>
-          {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={14}
-              onClick={onMapClick}
-            >
-              {locations.map((location) => (
-                <Marker
-                  key={location.id}
-                  position={{ lat: location.lat, lng: location.lng }}
-                  icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${location.markerColor.replace(
-                    "#",
-                    ""
-                  )}`}
-                />
-              ))}
-            </GoogleMap>
-          )}
-        </Center>
         <Center flexDir="column" mt={4}>
-          <Heading as="h2" fontSize="md">
-            Markerın Rengini Değiştir
-          </Heading>
-          <Box mt={4}>
-            <input type="color" value={color} onChange={handleColorChange} />
-          </Box>
+          <GoogleMapComp onMapClick={onMapClick} locations={locations} />
+          <MarkerColorChange setColorRef={colorRef} />
         </Center>
       </Container>
 
       {locations.length > 0 && (
         <Center mt={8}>
-          <Link href="/list-locations">Lokasyon Listelemeye Git</Link>
+          <Button
+            colorScheme={"cyan"}
+            padding={6}
+            as={Link}
+            fontWeight="medium"
+            href="/list-locations"
+          >
+            Lokasyon Listelemeye Git
+          </Button>
         </Center>
       )}
     </Box>

@@ -108,7 +108,7 @@ export default function MakeRoute() {
                   lat: location.lat,
                   lng: location.lng,
                 }}
-                icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${location.markerColor.replace(
+                icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${location.markerColor?.replace(
                   "#",
                   ""
                 )}`}
