@@ -1,10 +1,18 @@
-import React from "react";
-
+import GoogleMapComp from "@/components/map";
 import { useLocationsStore } from "@/store/useLocationsStore";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { useRouter } from "next/router";
-import { Alert, AlertIcon, Center, Container, Heading } from "@chakra-ui/react";
+import { getDetail } from "@/utils/getDetail";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Center,
+  Container,
+  Heading,
+} from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 
 export default function EditLocations() {
   const { locations, updateLocation } = useLocationsStore();
@@ -16,22 +24,16 @@ export default function EditLocations() {
     (location) => location.id === Number(id)
   );
 
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-  };
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_ENV_VARIABLE!,
-  });
-
-  const handleMarkerDragEnd = (e: google.maps.MapMouseEvent) => {
-    if (e.latLng && selectedLocation) {
+  const handleMarkerDragEnd = async (e: google.maps.MapMouseEvent) => {
+    if (selectedLocation && e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      const detail = await getDetail(lat, lng);
       const updatedLocation = {
         ...selectedLocation,
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
+        lat: lat,
+        lng: lng,
+        detail: detail,
       };
       updateLocation(selectedLocation.id, updatedLocation);
     }
@@ -44,29 +46,10 @@ export default function EditLocations() {
       </Center>
       <Container maxW="container.lg" mt={4}>
         <Center>
-          {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={{
-                lat: selectedLocation?.lat!,
-                lng: selectedLocation?.lng!,
-              }}
-              zoom={14}
-            >
-              <Marker
-                draggable={true}
-                onDragEnd={handleMarkerDragEnd}
-                position={{
-                  lat: selectedLocation?.lat!,
-                  lng: selectedLocation?.lng!,
-                }}
-                icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${selectedLocation?.markerColor.replace(
-                  "#",
-                  ""
-                )}`}
-              />
-            </GoogleMap>
-          )}
+          <GoogleMapComp
+            onMarkerDragEnd={handleMarkerDragEnd}
+            locations={selectedLocation ? [selectedLocation] : []}
+          />
         </Center>
         <Alert mt={8} status="info">
           <AlertIcon />
@@ -75,7 +58,15 @@ export default function EditLocations() {
 
         {locations.length > 0 && (
           <Center mt={8}>
-            <Link href="/list-locations">Lokasyon Listelemeye Git</Link>
+            <Button
+              colorScheme={"cyan"}
+              padding={6}
+              as={Link}
+              fontWeight="medium"
+              href="/list-locations"
+            >
+              Lokasyon Listelemeye Geri Dön
+            </Button>
           </Center>
         )}
       </Container>
