@@ -18,6 +18,7 @@ import {
   Tooltip,
   Tr,
   VStack,
+  Button,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -136,7 +137,17 @@ export default function MakeRoute() {
           handleMarkerClick={handleMarkerClick}
           directions={directions}
         />
-
+        <Center my={8}>
+          <Button
+            colorScheme="cyan"
+            padding={6}
+            as={Link}
+            href={"/make-route"}
+            fontWeight="medium"
+          >
+            Rota Oluşturma Sayfasına Git
+          </Button>
+        </Center>
         {locations.length === 0 ? (
           <Alert mt={8} status="error">
             <AlertIcon />

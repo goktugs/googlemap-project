@@ -1,6 +1,6 @@
 import { MAPSTYLES } from "./styles";
 import { LocationStateType } from "@/types/types";
-import { Box, Container, Skeleton, useColorMode } from "@chakra-ui/react";
+import { Box, Container, Skeleton, useColorMode, Text } from "@chakra-ui/react";
 import {
   DirectionsRenderer,
   GoogleMap,
@@ -27,6 +27,7 @@ export default function GoogleMapComp({
   userLocation,
   handleMarkerClick,
   directions,
+  selectedLocation,
 }: GoogleMapCompProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
@@ -36,6 +37,8 @@ export default function GoogleMapComp({
     lat: 41.015137,
     lng: 28.97953,
   });
+
+  console.log(selectedLocation);
 
   useEffect(() => {
     if (map && locations) {
@@ -123,20 +126,21 @@ export default function GoogleMapComp({
               }}
             />
           )}
-          {/* {infoWindowLocation && (
+          {selectedLocation && (
             <InfoWindow
               position={{
-                lat: infoWindowLocation.lat,
-                lng: infoWindowLocation.lng,
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
               }}
               onCloseClick={() => handleMarkerClick && handleMarkerClick(null)}
             >
-              <div>
-                <h3>{infoWindowLocation.name}</h3>
-                <p>{infoWindowLocation.description}</p>
-              </div>
+              <Box>
+                <Text>{selectedLocation.detail}</Text>
+                <Text>Latitude: {selectedLocation.lat}</Text>
+                <Text>Longtitude: {selectedLocation.lng}</Text>
+              </Box>
             </InfoWindow>
-          )} */}
+          )}
         </GoogleMap>
       )}{" "}
     </Container>
