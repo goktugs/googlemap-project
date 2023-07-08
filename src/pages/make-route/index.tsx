@@ -1,36 +1,19 @@
+import GoogleMapComp from "@/components/map";
 import { useLocationsStore } from "@/store/useLocationsStore";
 import { LocationStateType } from "@/types/types";
 import {
   Alert,
   AlertIcon,
-  Box,
   Center,
   Container,
   Heading,
   VStack,
 } from "@chakra-ui/react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  InfoWindow,
-  DirectionsRenderer,
-} from "@react-google-maps/api";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 export default function MakeRoute() {
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-  };
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_ENV_VARIABLE!,
-  });
-
   const { locations } = useLocationsStore();
-
   const [selectedLocation, setSelectedLocation] =
     useState<LocationStateType | null>(null);
   const [userLocation, setUserLocation] = useState<google.maps.LatLng | null>(
@@ -38,29 +21,10 @@ export default function MakeRoute() {
   );
   const [directions, setDirections] =
     useState<google.maps.DirectionsResult | null>(null);
-
+  console.log(userLocation);
   const handleMarkerClick = (location: LocationStateType) => {
     setSelectedLocation(location);
   };
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLatLng = new google.maps.LatLng(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-          setUserLocation(userLatLng);
-        },
-        (error) => {
-          console.error("Kullanıcı konumu alınamadı.", error);
-        }
-      );
-    } else {
-      console.error("Tarayıcınız konum hizmetini desteklemiyor.");
-    }
-  }, []);
 
   useEffect(() => {
     if (userLocation && selectedLocation) {
@@ -88,53 +52,38 @@ export default function MakeRoute() {
     }
   }, [userLocation, selectedLocation]);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLatLng = new google.maps.LatLng(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+          setUserLocation(userLatLng);
+        },
+        (error) => {
+          console.error("Kullanıcı konumu alınamadı.", error);
+        }
+      );
+    } else {
+      console.error("Tarayıcınız konum hizmetini desteklemiyor.");
+    }
+  }, []);
   return (
     <VStack>
       <Center mt={8}>
         <Heading as="h1">Rota Oluşturma Sayfası</Heading>
       </Center>
       <Container maxW="container.lg" mt={4}>
-        {isLoaded && (
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={{ lat: 41.015137, lng: 28.97953 }}
-            zoom={14}
-          >
-            {locations.map((location) => (
-              <Marker
-                key={location.id}
-                onClick={() => handleMarkerClick(location)}
-                position={{
-                  lat: location.lat,
-                  lng: location.lng,
-                }}
-                icon={`http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${location.markerColor?.replace(
-                  "#",
-                  ""
-                )}`}
-              >
-                {selectedLocation === location && (
-                  <InfoWindow onCloseClick={() => setSelectedLocation(null)}>
-                    <Box>
-                      <p>{location.detail}</p>
-                      <p>{`Latitude: ${location.lat}`}</p>
-                      <p>{`Longitude: ${location.lng}`}</p>
-                    </Box>
-                  </InfoWindow>
-                )}
-              </Marker>
-            ))}
+        <GoogleMapComp
+          locations={locations}
+          selectedLocation={selectedLocation}
+          userLocation={userLocation}
+          handleMarkerClick={handleMarkerClick}
+          directions={directions}
+        />
 
-            {directions && (
-              <DirectionsRenderer
-                options={{
-                  directions: directions,
-                  suppressMarkers: true,
-                }}
-              />
-            )}
-          </GoogleMap>
-        )}
         {locations.length === 0 ? (
           <Alert mt={8} status="error">
             <AlertIcon />
@@ -146,6 +95,13 @@ export default function MakeRoute() {
           <Alert mt={8} status="info">
             <AlertIcon />
             Konumunuzla Marker arasında rota oluşturmak için Markera tıklayın.
+          </Alert>
+        )}
+
+        {!userLocation && (
+          <Alert mt={8} status="error">
+            <AlertIcon />
+            Konumunuz alınamadı. Tarayıcınız konum hizmetini desteklemiyor.
           </Alert>
         )}
       </Container>
