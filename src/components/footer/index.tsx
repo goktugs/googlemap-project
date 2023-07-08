@@ -1,20 +1,18 @@
-import React, { ReactNode } from "react";
-
+import logo from "../../../public/logo.png";
 import {
   Box,
   chakra,
   Container,
   Stack,
   Text,
+  LinkBox,
+  LinkOverlay,
   useColorModeValue,
   VisuallyHidden,
 } from "@chakra-ui/react";
-
 import Image from "next/image";
-
+import React, { ReactNode } from "react";
 import { FaLinkedin, FaGithub, FaTwitter } from "react-icons/fa";
-
-import logo from "../../../public/logo.png";
 
 export default function Footer() {
   const SocialButton = ({
@@ -63,7 +61,11 @@ export default function Footer() {
         justify={{ base: "center", md: "space-between" }}
         align={{ base: "center", md: "center" }}
       >
-        <Image width={64} height={64} src={logo} alt="logo" />
+        <LinkBox>
+          <LinkOverlay isExternal href="http://www.yukatech.com/">
+            <Image width={64} height={64} src={logo} alt="logo" />
+          </LinkOverlay>
+        </LinkBox>
         <Stack direction={"row"} spacing={6}>
           <SocialButton
             label={"Linkedin"}
