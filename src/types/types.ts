@@ -1,5 +1,5 @@
 export type LocationStateType = {
-  id: number;
+  id: number | string;
   lat: number;
   lng: number;
   markerColor?: string;

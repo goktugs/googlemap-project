@@ -23,7 +23,12 @@ export default function MarkerColorChange({
         Markerın Rengini Değiştir
       </Heading>
       <Box mt={4}>
-        <input type="color" value={color} onChange={handleColorChange} />
+        <input
+          data-testid="colorChanger"
+          type="color"
+          value={color}
+          onChange={handleColorChange}
+        />
       </Box>
     </>
   );
