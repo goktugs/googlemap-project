@@ -38,8 +38,6 @@ export default function GoogleMapComp({
     lng: 28.97953,
   });
 
-  console.log(selectedLocation);
-
   useEffect(() => {
     if (map && locations) {
       if (locations.length > 1) {
