@@ -4,6 +4,7 @@ import { Box, Container, Skeleton, useColorMode } from "@chakra-ui/react";
 import {
   DirectionsRenderer,
   GoogleMap,
+  InfoWindow,
   MarkerF,
   useJsApiLoader,
 } from "@react-google-maps/api";
@@ -122,6 +123,20 @@ export default function GoogleMapComp({
               }}
             />
           )}
+          {/* {infoWindowLocation && (
+            <InfoWindow
+              position={{
+                lat: infoWindowLocation.lat,
+                lng: infoWindowLocation.lng,
+              }}
+              onCloseClick={() => handleMarkerClick && handleMarkerClick(null)}
+            >
+              <div>
+                <h3>{infoWindowLocation.name}</h3>
+                <p>{infoWindowLocation.description}</p>
+              </div>
+            </InfoWindow>
+          )} */}
         </GoogleMap>
       )}{" "}
     </Container>

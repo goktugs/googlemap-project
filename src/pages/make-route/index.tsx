@@ -6,7 +6,17 @@ import {
   AlertIcon,
   Center,
   Container,
+  Text,
   Heading,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
@@ -21,7 +31,6 @@ export default function MakeRoute() {
   );
   const [directions, setDirections] =
     useState<google.maps.DirectionsResult | null>(null);
-  console.log(userLocation);
   const handleMarkerClick = (location: LocationStateType) => {
     setSelectedLocation(location);
   };
@@ -70,6 +79,50 @@ export default function MakeRoute() {
       console.error("Tarayıcınız konum hizmetini desteklemiyor.");
     }
   }, []);
+
+  let userLatLng: google.maps.LatLng | undefined;
+
+  if (userLocation) {
+    userLatLng = new google.maps.LatLng(
+      userLocation?.lat(),
+      userLocation?.lng()
+    );
+  }
+
+  const distanceByLocations = locations.map((location) => {
+    if (userLatLng === undefined) {
+      return;
+    }
+    const locationLatLng = new google.maps.LatLng(location.lat, location.lng);
+    const rad = function (x: number) {
+      return (x * Math.PI) / 180;
+    };
+    var R = 63710;
+    var dLat = rad(locationLatLng.lat() - userLatLng.lat());
+    var dLong = rad(locationLatLng.lng() - userLatLng.lng());
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(rad(userLatLng.lat())) *
+        Math.cos(rad(locationLatLng.lat())) *
+        Math.sin(dLong / 2) *
+        Math.sin(dLong / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+
+    return {
+      id: location.id,
+      detail: location.detail,
+      distance: d.toFixed(2),
+    };
+  });
+
+  distanceByLocations.sort((a, b) => {
+    if (a === undefined || b === undefined) {
+      return 0;
+    }
+    return Number(a.distance) - Number(b.distance);
+  });
+
   return (
     <VStack>
       <Center mt={8}>
@@ -101,8 +154,49 @@ export default function MakeRoute() {
         {!userLocation && (
           <Alert mt={8} status="error">
             <AlertIcon />
-            Konumunuz alınamadı. Tarayıcınız konum hizmetini desteklemiyor.
+            Konumunuz henüz alınamadı. Tarayıcınız konum hizmetini desteklemiyor
+            olabilir...
           </Alert>
+        )}
+
+        {distanceByLocations.length > 0 && (
+          <TableContainer mt={4}>
+            <Table size="sm" variant="striped">
+              <TableCaption>
+                Markerların konumunuza en yakın sıralanması
+              </TableCaption>
+              <Thead>
+                <Tr>
+                  <Th>Id</Th>
+                  <Th>Detay</Th>
+                  <Th>Konumunuza Uzaklık</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {distanceByLocations.map(
+                  (location) =>
+                    location && (
+                      <Tr key={location.id}>
+                        <Td>{location.id}</Td>
+                        <Td>
+                          <Tooltip label={location.detail}>
+                            <Text
+                              maxW="250px"
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              whiteSpace="nowrap"
+                            >
+                              {location.detail}
+                            </Text>
+                          </Tooltip>
+                        </Td>
+                        <Td>{location.distance ?? 0} km</Td>
+                      </Tr>
+                    )
+                )}
+              </Tbody>
+            </Table>
+          </TableContainer>
         )}
       </Container>
     </VStack>
