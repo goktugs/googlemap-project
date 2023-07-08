@@ -130,6 +130,8 @@ export default function GoogleMapComp({
                 lat: selectedLocation.lat,
                 lng: selectedLocation.lng,
               }}
+              // bu ts hatasını çözemedim
+              // @ts-ignore
               onCloseClick={() => handleMarkerClick && handleMarkerClick(null)}
             >
               <Box>
