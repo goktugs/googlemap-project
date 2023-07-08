@@ -35,7 +35,7 @@ export default function EditLocations() {
         lng: lng,
         detail: detail,
       };
-      updateLocation(selectedLocation.id, updatedLocation);
+      updateLocation(Number(selectedLocation.id), updatedLocation);
     }
   };
 

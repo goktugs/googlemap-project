@@ -142,10 +142,10 @@ export default function MakeRoute() {
             colorScheme="cyan"
             padding={6}
             as={Link}
-            href={"/make-route"}
+            href={"/add-location"}
             fontWeight="medium"
           >
-            Rota Oluşturma Sayfasına Git
+            Konum Ekleme Sayfasına Git
           </Button>
         </Center>
         {locations.length === 0 ? (
