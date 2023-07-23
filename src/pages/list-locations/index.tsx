@@ -41,7 +41,7 @@ const toBase64 = (str: string) =>
     : window.btoa(str);
 
 export default function ListLocations() {
-  const { locations } = useLocationsStore();
+  const { locations, removeLocation } = useLocationsStore();
   const [isSmallScreen] = useMediaQuery("(max-width: 600px)");
 
   const [selectedLocation, setSelectedLocation] =
@@ -53,6 +53,10 @@ export default function ListLocations() {
     } else {
       setSelectedLocation(location);
     }
+  };
+
+  const handleDeleteClick = (id: number) => {
+    removeLocation(id);
   };
 
   useEffect(() => {
@@ -98,6 +102,7 @@ export default function ListLocations() {
           >
             <Thead textAlign="center">
               <Tr>
+                <Th>Remove Loc</Th>
                 <Th>Id</Th>
                 <Th>Detail</Th>
                 <Th textAlign="center">Marker Icon</Th>
@@ -107,6 +112,13 @@ export default function ListLocations() {
             <Tbody>
               {locations.map((location) => (
                 <Tr key={location.id}>
+                  <Th>
+                    <Button
+                      onClick={() => handleDeleteClick(Number(location.id))}
+                    >
+                      Delete
+                    </Button>
+                  </Th>
                   <Th>{location.id}</Th>
                   <Th maxW="200px">
                     <Tooltip label={location.detail}>
